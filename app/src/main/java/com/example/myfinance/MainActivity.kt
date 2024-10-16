@@ -3,20 +3,12 @@ package com.example.myfinance
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
+
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myfinance.ui.theme.CategoryAddingScreen
-import com.example.myfinance.ui.theme.CategoryCreatingScreen
+import com.example.myfinance.ui.theme.CategoryBuilderScreen
 
 class MainActivity : ComponentActivity()
 {
@@ -31,7 +23,7 @@ class MainActivity : ComponentActivity()
 
             NavHost( // описание существующих экранов
                 navController = nav,
-                startDestination = "category_creating"
+                startDestination = "category_builder"
             )
             {
                 // экран выбора существующих категорий
@@ -41,9 +33,9 @@ class MainActivity : ComponentActivity()
                 }
 
                 // экран добавления категории
-                composable("category_creating")
+                composable("category_builder")
                 {
-                    CategoryCreatingScreen(nav)
+                    CategoryBuilderScreen(nav) {}
                 }
             }
         }
