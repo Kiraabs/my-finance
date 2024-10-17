@@ -3,12 +3,13 @@ package com.example.myfinance
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.myfinance.ui.theme.CategoryAddingScreen
+import com.example.myfinance.ui.theme.CategoryChoosingScreen
 import com.example.myfinance.ui.theme.CategoryBuilderScreen
+import com.example.myfinance.ui.theme.MainScreen
+import com.example.myfinance.ui.theme.OperationAddingScreen
 
 class MainActivity : ComponentActivity()
 {
@@ -18,24 +19,42 @@ class MainActivity : ComponentActivity()
 
         setContent()
         {
-            // контроллер для навигации между экранами
-            val nav = rememberNavController()
+            val nav = rememberNavController() // контроллер для навигации между экранами
+            val dao = FinanceDB.instance(this).financeDao()
 
             NavHost( // описание существующих экранов
                 navController = nav,
-                startDestination = "category_builder"
+                startDestination = "main_screen"
             )
             {
-                // экран выбора существующих категорий
-                composable("category_adding")
+                composable("main_screen") // главный экран
                 {
-                    CategoryAddingScreen(nav)
+                    MainScreen(nav)
                 }
 
-                // экран добавления категории
-                composable("category_builder")
+                composable("operation_adding") // экран добавления операции
                 {
-                    CategoryBuilderScreen(nav) {}
+                    OperationAddingScreen(nav, dao) {}
+                }
+
+                composable("category_choosing") // экран выбора существующих категорий
+                {
+                    CategoryChoosingScreen(nav, dao)
+                }
+
+                composable("category_builder") // экран создания категории
+                {
+                    CategoryBuilderScreen(
+                        dao = dao,
+                        onExited =
+                        {
+                            nav.navigate("category_choosing") {
+                                popUpTo("category_choosing") {
+                                    inclusive = true
+                                }
+                            }
+                        }
+                    )
                 }
             }
         }

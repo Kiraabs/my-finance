@@ -15,7 +15,7 @@ class ContentManager
         private var _icons: MutableList<Int>? = null
 
         /**
-         * Список готовых цветов приложения.
+         * Список встроенных цветов приложения.
          */
         private val _colors = listOf(
             Color.Red,
@@ -26,6 +26,22 @@ class ContentManager
             Color.Yellow,
             Color.Magenta,
             Color.Gray,
+            Color(239, 154, 154, 255),
+            Color(244, 143, 177, 255),
+            Color(206, 147, 216, 255),
+            Color(179, 157, 219, 255),
+            Color(159, 168, 218, 255),
+            Color(144, 202, 249, 255),
+            Color(129, 212, 250, 255),
+            Color(128, 222, 234, 255),
+            Color(128, 203, 196, 255),
+            Color(165, 214, 167, 255),
+            Color(197, 225, 165, 255),
+            Color(230, 238, 156, 255),
+            Color(255, 245, 157, 255),
+            Color(255, 224, 130, 255),
+            Color(255, 204, 128, 255),
+            Color(255, 171, 145, 255),
             Color(239, 83, 80, 255),
             Color(236, 64, 122, 255),
             Color(171, 71, 188, 255),
@@ -42,6 +58,180 @@ class ContentManager
             Color(255, 202, 40, 255),
             Color(255, 167, 38, 255),
             Color(255, 112, 67, 255),
+            Color(229, 57, 53, 255),
+            Color(216, 27, 96, 255),
+            Color(142, 36, 170, 255),
+            Color(94, 53, 177, 255),
+            Color(57, 73, 171, 255),
+            Color(30, 136, 229, 255),
+            Color(3, 155, 229, 255),
+            Color(0, 172, 193, 255),
+            Color(0, 137, 123, 255),
+            Color(67, 160, 71, 255),
+            Color(124, 179, 66, 255),
+            Color(192, 202, 51, 255),
+            Color(253, 216, 53, 255),
+            Color(255, 179, 0, 255),
+            Color(251, 140, 0, 255),
+            Color(244, 81, 30, 255),
+            Color(198, 40, 40, 255),
+            Color(173, 20, 87, 255),
+            Color(106, 27, 154, 255),
+            Color(69, 39, 160, 255),
+            Color(40, 53, 147, 255),
+            Color(21, 101, 192, 255),
+            Color(2, 119, 189, 255),
+            Color(0, 131, 143, 255),
+            Color(0, 105, 92, 255),
+            Color(46, 125, 50, 255),
+            Color(85, 139, 47, 255),
+            Color(158, 157, 36, 255),
+            Color(249, 168, 37, 255),
+            Color(255, 143, 0, 255),
+            Color(239, 108, 0, 255),
+            Color(216, 67, 21, 255),
+            Color(255, 138, 128, 255),
+            Color(255, 128, 171, 255),
+            Color(234, 128, 252, 255),
+            Color(179, 136, 255, 255),
+            Color(140, 158, 255, 255),
+            Color(128, 216, 255, 255),
+            Color(132, 255, 255, 255),
+            Color(167, 255, 235, 255),
+            Color(185, 246, 202, 255),
+            Color(204, 255, 144, 255),
+            Color(244, 255, 129, 255),
+            Color(244, 255, 129, 255),
+            Color(255, 255, 141, 255),
+            Color(255, 229, 127, 255),
+            Color(255, 209, 128, 255),
+            Color(255, 158, 128, 255),
+            Color(255, 82, 82, 255),
+            Color(255, 64, 129, 255),
+            Color(224, 64, 251, 255),
+            Color(124, 77, 255, 255),
+            Color(83, 109, 254, 255),
+            Color(68, 138, 255, 255),
+            Color(64, 196, 255, 255),
+            Color(24, 255, 255, 255),
+            Color(100, 255, 218, 255),
+            Color(105, 240, 174, 255),
+            Color(178, 255, 89, 255),
+            Color(238, 255, 65, 255),
+            Color(255, 255, 0, 255),
+            Color(255, 215, 64, 255),
+            Color(255, 171, 64, 255),
+            Color(255, 110, 64, 255),
+            Color(255, 23, 68, 255),
+            Color(245, 0, 87, 255),
+            Color(213, 0, 249, 255),
+            Color(101, 31, 255, 255),
+            Color(61, 90, 254, 255),
+            Color(41, 121, 255, 255),
+            Color(0, 176, 255, 255),
+            Color(0, 229, 255, 255),
+            Color(29, 233, 182, 255),
+            Color(0, 230, 118, 255),
+            Color(118, 255, 3, 255),
+            Color(198, 255, 0, 255),
+            Color(255, 234, 0, 255),
+            Color(255, 196, 0, 255),
+            Color(255, 145, 0, 255),
+            Color(255, 61, 0, 255),
+            Color(213, 0, 0, 255),
+            Color(197, 17, 98, 255),
+            Color(170, 0, 255, 255),
+            Color(98, 0, 234, 255),
+            Color(48, 79, 254, 255),
+            Color(41, 98, 255, 255),
+            Color(0, 145, 234, 255),
+            Color(0, 184, 212, 255),
+            Color(0, 191, 165, 255),
+            Color(0, 200, 83, 255),
+            Color(100, 221, 23, 255),
+            Color(174, 234, 0, 255),
+            Color(255, 214, 0, 255),
+            Color(255, 171, 0, 255),
+            Color(255, 109, 0, 255),
+            Color(221, 44, 0, 255),
+        )
+
+        /**
+         * Список встроенных категорий приложения.
+         */
+        private val _categories = listOf(
+            CategoryModel(
+                title = "Здоровье",
+                icon = R.drawable.health,
+                color = "18439207149134413824",
+                builtIn = true
+            ),
+            CategoryModel(
+                title = "Досуг",
+                icon = R.drawable.game,
+                color = "18446646380383436800",
+                builtIn = true
+            ),
+            CategoryModel(
+                title = "Дом",
+                icon = R.drawable.house,
+                color = "18390811552132366336",
+                builtIn = true
+            ),
+            CategoryModel(
+                title = "Рестораны",
+                icon = R.drawable.room_service,
+                color = "18446684871880343552",
+                builtIn = true
+            ),
+            CategoryModel(
+                title = "Образование",
+                icon = 2130968649,
+                color = "18386428121394970624",
+                builtIn = true
+            ),
+            CategoryModel(
+                title = "Подарки",
+                icon = 2130968651,
+                color = "18441185466905526272",
+                builtIn = true
+            ),
+            CategoryModel(
+                title = "Продукты",
+                icon = 2130968679,
+                color = "18403602991237038080",
+                builtIn = true
+            ),
+            CategoryModel(
+                title = "Спорт",
+                icon = 2130968640,
+                color = "18443455563279892480",
+                builtIn = true
+            ),
+            CategoryModel(
+                title = "Транспорт",
+                icon = 2130968616,
+                color = "18400700649906896896",
+                builtIn = true
+            ),
+            CategoryModel(
+                title = "Счета",
+                icon = 2130968627,
+                color = "18403602991237038080",
+                builtIn = true
+            ),
+            CategoryModel(
+                title = "Такси",
+                icon = 2130968617,
+                color = "18446678103011885056",
+                builtIn = true
+            ),
+            CategoryModel(
+                title = "Уход",
+                icon = 2130968647,
+                color = "18393721529914359808",
+                builtIn = true
+            )
         )
 
         /**
@@ -51,9 +241,14 @@ class ContentManager
         val Last = getIcons().last()
 
         /**
-         * Возвращает список готовых цветов.
+         * Возвращает список встроенных цветов.
          */
         fun getColor(): List<Color> { return _colors }
+
+        /**
+         * Возвращает список встроенных категорий.
+         */
+        fun getCategories(): List<CategoryModel> { return _categories }
 
         /**
          * Инициализирует и загружает список всех иконок из Drawable.

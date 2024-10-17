@@ -20,6 +20,7 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -33,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -48,46 +50,112 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.myfinance.CategoryListViewModel
 import com.example.myfinance.ContentManager
 import com.example.myfinance.CategoryModel
-import com.example.myfinance.CategoryType
+import com.example.myfinance.FinanceDao
 import com.github.skydoves.colorpicker.compose.AlphaSlider
 import com.github.skydoves.colorpicker.compose.AlphaTile
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import kotlinx.coroutines.launch
 
 // Данный файл содержит все функции пользовательского интерфейса,
 // связанные с категориями
 
 /**
- * Экран существующих категорий.
- * - nav: контроллер для перехода к другим экранам
- *  или возврата на главный
+ * Экран выбора категорий.
+ * - nav: контроллер для перехода к другим экранам или возврата на главный
+ * - dao: контроллер для операций с базой данных
+ * - categoryVM: список категорий
  */
 @Composable
-fun CategoryAddingScreen(nav: NavController)
+fun CategoryChoosingScreen(
+    nav: NavController,
+    dao: FinanceDao,
+    categoryVM: CategoryListViewModel = viewModel()
+)
 {
+    val categoryList by categoryVM.categoryList
 
+    LaunchedEffect(Unit) // загружаем категории из базы данных
+    {
+        categoryVM.copyFrom(dao.getCategories())
+    }
+
+    Scaffold( // разметка данного экрана
+        topBar = // верхняя панель экрана
+        {
+            TopBar(
+                screenTitle = "Выбор категории",
+                onNavIconClicked = // возврат к пред. экрану
+                {
+                    nav.navigate("operation_adding") {
+                        popUpTo("operation_adding") {
+                            inclusive = true
+                        }
+                    }
+                },
+            )
+        },
+        bottomBar = // нижняя панель экрана
+        {
+            BottomBar(
+                onActionButtonClicked = // кнопка "Галочка"
+                {
+                    nav.navigate("category_builder") {
+                        popUpTo("category_builder") {
+                            inclusive = true
+                        }
+                    }
+                },
+                actionButtonIcon = Icons.Default.Add
+            )
+        }
+    )
+    { padding ->
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(128.dp),
+            modifier = Modifier.fillMaxSize()
+                .padding(padding)
+                .padding(vertical = 24.dp),
+        ) {
+            items(categoryList)
+            { item ->
+                CategoryIcon(
+                    icon = item.icon,
+                    title = item.title,
+                    color = item.color.toULong(),
+                    size = 64.dp,
+                    onClick =
+                    {
+                        // функционала
+                    }
+                )
+            }
+        }
+    }
 }
 
 /**
  * Экран создания категории.
- * - nav: контроллер для перехода к другим экранам
- * или возврата на главный
+ * - nav: контроллер для перехода к другим экранам, или возврата на главный
  * - onBuilt: возвращает созданную категорию
  */
 @Composable
-fun CategoryBuilderScreen(nav: NavController, onBuilt: (CategoryModel) -> Unit)
+fun CategoryBuilderScreen(
+    onExited: () -> Unit,
+    dao: FinanceDao,
+    categoryVM: CategoryListViewModel = viewModel()
+)
 {
     val scope = rememberCoroutineScope() // корутина для параллельных операций
 
     // название категории
     var categoryName by remember { mutableStateOf("") }
-
-    // тип категории (по умолчанию - incomes)
-    var categoryType by remember { mutableStateOf(CategoryType.Incomes) }
 
     // сама иконка категории (по умолчанию - первая иконка из Drawable)
     var categoryIcon by remember { mutableIntStateOf(ContentManager.Last) }
@@ -100,9 +168,6 @@ fun CategoryBuilderScreen(nav: NavController, onBuilt: (CategoryModel) -> Unit)
 
     // флаг показа окна выбора иконки
     var showIconPicker by remember { mutableStateOf(false) }
-
-    // флаг для переключателей типа категории
-    var checked by remember { mutableStateOf(true) }
 
     // флаг: были ли ошибки
     var hasErrors by remember { mutableStateOf(false) }
@@ -132,14 +197,7 @@ fun CategoryBuilderScreen(nav: NavController, onBuilt: (CategoryModel) -> Unit)
         {
             TopBar(
                 screenTitle = "Создание категории",
-                onNavIconClicked = // возврат к пред. экрану
-                {
-                    nav.navigate("category_adding") {
-                        popUpTo("category_adding") {
-                            inclusive = true
-                        }
-                    }
-                },
+                onNavIconClicked = onExited // возврат к пред. экрану
             )
         },
         bottomBar = // нижняя панель экрана
@@ -151,13 +209,17 @@ fun CategoryBuilderScreen(nav: NavController, onBuilt: (CategoryModel) -> Unit)
                         hasErrors = true // ошибки были
                     else
                     {
-                        val newCategory = CategoryModel( // создаем категорию, как програмнный объект
-                            title =  categoryName,
-                            type = categoryType.toString(),
-                            icon = categoryIcon,
-                        )
-                        newCategory.color = categoryColor
-                        onBuilt(newCategory) // возвращаем ее
+                        scope.launch()
+                        {
+                            val newCategory = CategoryModel( // создаем категорию, как програмнный объект
+                                title =  categoryName,
+                                icon = categoryIcon,
+                                color = categoryColor.toString(),
+                            )
+                            categoryVM.add(newCategory) // добавляем ее в список
+                            dao.insert(newCategory) // и базу данных
+                            onExited() // выходим на пред. экран
+                        }
                     }
                 },
                 actionButtonIcon = Icons.Default.Check
@@ -183,8 +245,8 @@ fun CategoryBuilderScreen(nav: NavController, onBuilt: (CategoryModel) -> Unit)
                 {
                     categoryName = it.take(charLimit)
 
-                    // если ранее, были ошибки и теперь поле ввода не пустое,
-                    // то скрываем ошибки
+                    // если ранее были ошибки, но теперь поле ввода не пустое,
+                    // то ошибок теперь - нет
                     if (hasErrors && categoryName.isNotBlank())
                         hasErrors = false
                 },
@@ -216,40 +278,6 @@ fun CategoryBuilderScreen(nav: NavController, onBuilt: (CategoryModel) -> Unit)
                 textAlign = TextAlign.End,
                 modifier = Modifier.fillMaxWidth(0.8f)
             )
-            Row( // строка переключателей типа категории
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .selectableGroup(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            )
-            {
-                // переключатели типа категории
-                RadioButton(
-                    selected = checked,
-                    onClick =
-                    {
-                        checked = true
-                        categoryType = CategoryType.Incomes
-                    },
-                    colors = RadioButtonDefaults.colors(
-                        selectedColor = MainColor
-                    )
-                )
-                Text("Расходы", style = MaterialTheme.typography.bodyLarge)
-                RadioButton(
-                    selected = ! checked,
-                    onClick =
-                    {
-                        checked = false
-                        categoryType = CategoryType.Expanses
-                    },
-                    colors = RadioButtonDefaults.colors(
-                        selectedColor = MainColor
-                    )
-                )
-                Text("Доходы", style = MaterialTheme.typography.bodyLarge)
-            }
             Button( // кнопка перехода на экран выбора цвета
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
@@ -295,19 +323,18 @@ fun CategoryBuilderScreen(nav: NavController, onBuilt: (CategoryModel) -> Unit)
                 )
             }
             Text(
-                modifier = Modifier.fillMaxWidth(0.8f).padding(vertical = 20.dp),
+                modifier = Modifier.fillMaxWidth(0.8f).padding(vertical = 25.dp),
                 text = "Иконка",
                 textAlign = TextAlign.Start,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.fillMaxHeight(0.20f)) // отступ от текста "Иконка"
+            Spacer(Modifier.fillMaxHeight(0.20f))
             CategoryIcon(
                 icon = categoryIcon,
                 title = categoryName,
                 color = categoryColor,
                 isEnabled = false,
-                size = 256.dp,
             )
         }
     }
@@ -398,7 +425,7 @@ fun ColorPickerDialog(onColorPicked: (ULong) -> Unit, onExited: () -> Unit)
                 )
                 {
                     Text(
-                        text = "Выбрать готовый цвет",
+                        text = "Выбрать предустановленный",
                         color = MainColor,
                         style = MaterialTheme.typography.titleMedium,
                     )
@@ -467,14 +494,16 @@ fun IconPickerDialog(onIconPicked: (Int) -> Unit, onExited: () -> Unit)
             LazyVerticalGrid ( // таблица иконок
                 horizontalArrangement = Arrangement.Center,
                 verticalArrangement = Arrangement.Center,
-                columns = GridCells.Adaptive(minSize = 100.dp),
-                modifier = Modifier.fillMaxWidth()
+                columns = GridCells.Adaptive(minSize = 86.dp),
+                modifier = Modifier.fillMaxWidth(),
             )
             {
                 items(ContentManager.getIcons())
                 { item ->
                     CategoryIcon(
                         icon = item,
+                        size = 48.dp,
+                        padding = 12.dp,
                         onClick =
                         {
                             onIconPicked(item)
@@ -574,6 +603,7 @@ fun PresetColorPickerDialog(onColorPicked: (ULong) -> Unit, onExited: () -> Unit
  * - isEnabled: включена ли возможность клика по иконки
  * (используется, когда иконку нужно просто отобразить и ничего не делать при клике по ней)
  * - size: размер иконки
+ * - padding: оступы
  */
 @Composable
 fun CategoryIcon(
@@ -582,42 +612,42 @@ fun CategoryIcon(
     color: ULong = MainColor.value,
     onClick: () -> Unit = {},
     isEnabled: Boolean = true,
-    size: Dp = 86.dp
+    size: Dp = 86.dp,
+    padding: Dp = 0.dp
 )
 {
-    Button( // кнопка иконки (чтобы была возможность клика по ней)
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent
-        ),
-        shape = CircleShape,
-        onClick = onClick,
-        enabled = isEnabled,
-        modifier = Modifier.size(size)
+    Column( // контейнер иконки категории
+        modifier = Modifier.fillMaxSize().padding(padding),
+        horizontalAlignment = Alignment.CenterHorizontally,
     )
     {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally)
-        {
-            Icon( // сама иконка
-                modifier = Modifier
-                    .background(color = Color(color), shape = CircleShape)
-                    .padding(12.dp),
-                tint = Color.White,
-                painter = painterResource(icon),
-                contentDescription = icon.toString()
-            )
+        Icon( // сама иконка
+            modifier = Modifier
+                .background(color = Color(color), shape = CircleShape)
+                .padding(12.dp)
+                .size(size)
+                .clickable // делаем иконку кликабельной
+                {
+                    if (isEnabled) // если иконка активка
+                        onClick() // то вызываем функцию клика по ней из параметров
+                },
+            tint = Color.White,
+            painter = painterResource(icon),
+            contentDescription = icon.toString()
+        )
 
-            if (title != null) // если название было, то отобразить его
-            {
-                Text( // текст названия категории
-                    modifier = Modifier.padding(24.dp),
-                    text = title,
-                    textAlign = TextAlign.Center,
-                    color = Color.Black,
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
+        if (title != null) // если у категории введен заголовок
+        {
+            Text( // то отображаем его
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+                color = Color.Black,
+                softWrap = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp)
+            )
         }
     }
 }

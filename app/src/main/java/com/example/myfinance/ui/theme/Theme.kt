@@ -15,13 +15,21 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,7 +42,7 @@ import androidx.compose.ui.unit.dp
 /**
  * Переменная, хранящая основной цвет приложения.
  */
-val MainColor = Color(38, 166, 154, 255)
+val MainColor = Color(102, 187, 106, 255)
 
 /**
  * Функция верхней панели приложения. Содержит следующие параметры:
@@ -46,11 +54,23 @@ val MainColor = Color(38, 166, 154, 255)
  * По умолчанию - false, то есть иконка будет отображаться и экран не будет считаться главным)
  */
 @Composable
-fun TopBar(screenTitle: String, onNavIconClicked: () -> Unit, isMainScreen: Boolean = false)
+fun TopBar(
+    screenTitle: String,
+    onNavIconClicked: () -> Unit = {},
+    isMainScreen: Boolean = false
+)
 {
+    // флаг показа меню приложения
+    var showMenu by remember { mutableStateOf(false) }
+
     var arrowTint = Color.White // цвет иконки возврата
     if (isMainScreen) // если данный экран главный
         arrowTint = Color.Transparent // то делаем ее прозрачной
+
+    if (showMenu)
+    {
+        DockMenu()
+    }
 
     // контейнер верхней панели приложения
     // встроенная функция CenterAlignedTopAppBar не используется,
@@ -94,7 +114,7 @@ fun TopBar(screenTitle: String, onNavIconClicked: () -> Unit, isMainScreen: Bool
         )
 
         IconButton( // иконка вызова главного меню
-            onClick = onNavIconClicked
+            onClick = { showMenu = true } // показать меню
         )
         {
             Icon(
@@ -107,8 +127,16 @@ fun TopBar(screenTitle: String, onNavIconClicked: () -> Unit, isMainScreen: Bool
     }
 }
 
+/**
+ * Функция нижней панели приложения.
+ * - onActionButtonClicked: дейсвтие, которое должно произойти по щелчку по кнопке данной панели
+ * - actionButtonIcon: иконка кнопки панели
+ */
 @Composable
-fun BottomBar(onActionButtonClicked: () -> Unit, actionButtonIcon: ImageVector)
+fun BottomBar(
+    onActionButtonClicked: () -> Unit,
+    actionButtonIcon: ImageVector
+)
 {
     Row( // контейнер нижней панели
         modifier = Modifier
@@ -120,20 +148,20 @@ fun BottomBar(onActionButtonClicked: () -> Unit, actionButtonIcon: ImageVector)
                 )
             )
             .fillMaxWidth()
-            .navigationBarsPadding()
-            .padding(vertical = 18.dp),
+            .navigationBarsPadding() // оступ от кнопок навигации на телефоне
+            .padding(vertical = 12.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     )
     {
-        FloatingActionButton(
+        FloatingActionButton( // кнопка нижней панели
             onClick = onActionButtonClicked,
             containerColor = Color.White,
             contentColor = MainColor,
             shape = CircleShape
         )
         {
-            Icon(
+            Icon( // ее иконка
                 imageVector = actionButtonIcon,
                 contentDescription = actionButtonIcon.name,
             )
@@ -156,4 +184,25 @@ fun getDefaultTextFieldColors(): TextFieldColors
         cursorColor = MainColor,
         errorIndicatorColor = Color.Red,
     )
+}
+
+@Composable
+private fun DockMenu()
+{
+    ModalNavigationDrawer(
+        drawerContent = {
+            ModalDrawerSheet {
+                Text("Drawer title", modifier = Modifier.padding(16.dp))
+                HorizontalDivider()
+                NavigationDrawerItem(
+                    label = { Text(text = "Drawer Item") },
+                    selected = false,
+                    onClick = { /*TODO*/ }
+                )
+                // ...other drawer items
+            }
+        }
+    ) {
+        // Screen content
+    }
 }
