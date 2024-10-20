@@ -14,13 +14,16 @@ import androidx.room.PrimaryKey
  * (используется для того, чтобы пользователь не мог удалять встроенные
  * категории. Для удобства имеет значение по умолчанию - false)
  */
-@Entity(tableName = "category")
+@Entity(tableName = "categories")
 data class CategoryModel(
-    @PrimaryKey(autoGenerate = true) var id: Int = 0,
+    @PrimaryKey(autoGenerate = true) var id: Int = 14,
     var title: String,
     var icon: Int,
     var color: String,
     val builtIn: Boolean = false
+
+    // смещение в id необходимо,
+    // потому что встроенные категории имеют id с 1 по 13
 )
 
 

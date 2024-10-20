@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 /**
  * База данных приложения.
  */
-@Database(entities = [CategoryModel::class], version = 1)
+@Database(entities = [CategoryModel::class, OperationModel::class], version = 1)
 abstract class FinanceDB : RoomDatabase()
 {
     /**

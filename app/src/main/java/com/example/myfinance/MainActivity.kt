@@ -34,7 +34,14 @@ class MainActivity : ComponentActivity()
 
                 composable("operation_adding") // экран добавления операции
                 {
-                    OperationAddingScreen(nav, dao) {}
+                    OperationAddingScreen(nav, dao)
+                    {
+                        nav.navigate("main_screen") {
+                            popUpTo("main_screen") {
+                                inclusive = true
+                            }
+                        }
+                    }
                 }
 
                 composable("category_choosing") // экран выбора существующих категорий

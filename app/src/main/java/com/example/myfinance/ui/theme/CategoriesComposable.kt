@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -27,8 +26,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -132,7 +129,12 @@ fun CategoryChoosingScreen(
                     size = 64.dp,
                     onClick =
                     {
-                        // функционала
+                        CategoryListViewModel.SelectedCategory = item
+                        nav.navigate("operation_adding") {
+                            popUpTo("operation_adding") {
+                                inclusive = true
+                            }
+                        }
                     }
                 )
             }
@@ -217,7 +219,7 @@ fun CategoryBuilderScreen(
                                 color = categoryColor.toString(),
                             )
                             categoryVM.add(newCategory) // добавляем ее в список
-                            dao.insert(newCategory) // и базу данных
+                            dao.insertCategory(newCategory) // и базу данных
                             onExited() // выходим на пред. экран
                         }
                     }

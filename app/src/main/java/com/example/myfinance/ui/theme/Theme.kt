@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 // Данный файл содержит общие функции пользовательского интерфейса приложения.
@@ -183,6 +184,19 @@ fun getDefaultTextFieldColors(): TextFieldColors
         focusedIndicatorColor = MainColor,
         cursorColor = MainColor,
         errorIndicatorColor = Color.Red,
+    )
+}
+
+@Composable
+fun ErrorText(text: String, align: TextAlign = TextAlign.Left)
+{
+    Text(
+        modifier = Modifier.fillMaxWidth(0.8f),
+        text = text,
+        style = MaterialTheme.typography.titleSmall,
+        fontWeight = FontWeight.Bold,
+        color = Color.Red,
+        textAlign = align
     )
 }
 

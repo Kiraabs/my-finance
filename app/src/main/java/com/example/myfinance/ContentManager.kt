@@ -157,76 +157,96 @@ class ContentManager
         )
 
         /**
-         * Список встроенных категорий приложения.
+         * Список встроенных категорий
+         * (существуют локально и не хранятся в базе данных).
          */
         private val _categories = listOf(
             CategoryModel(
+                id = 1,
                 title = "Здоровье",
                 icon = R.drawable.health,
                 color = "18439207149134413824",
                 builtIn = true
             ),
             CategoryModel(
+                id = 2,
                 title = "Досуг",
                 icon = R.drawable.game,
                 color = "18446646380383436800",
                 builtIn = true
             ),
             CategoryModel(
+                id = 3,
                 title = "Дом",
                 icon = R.drawable.house,
                 color = "18390811552132366336",
                 builtIn = true
             ),
             CategoryModel(
+                id = 4,
+                title = "Работа",
+                icon = 2130968634,
+                color = "18374876424600289280",
+                builtIn = true
+            ),
+            CategoryModel(
+                id = 5,
                 title = "Рестораны",
                 icon = R.drawable.room_service,
                 color = "18446684871880343552",
                 builtIn = true
             ),
             CategoryModel(
+                id = 6,
                 title = "Образование",
                 icon = 2130968649,
                 color = "18386428121394970624",
                 builtIn = true
             ),
             CategoryModel(
+                id = 7,
                 title = "Подарки",
                 icon = 2130968651,
                 color = "18441185466905526272",
                 builtIn = true
             ),
             CategoryModel(
+                id = 8,
                 title = "Продукты",
                 icon = 2130968679,
                 color = "18403602991237038080",
                 builtIn = true
             ),
             CategoryModel(
+                id = 9,
                 title = "Спорт",
                 icon = 2130968640,
                 color = "18443455563279892480",
                 builtIn = true
             ),
             CategoryModel(
+                id = 10,
                 title = "Транспорт",
                 icon = 2130968616,
                 color = "18400700649906896896",
                 builtIn = true
             ),
             CategoryModel(
+                id = 11,
                 title = "Счета",
                 icon = 2130968627,
                 color = "18403602991237038080",
                 builtIn = true
             ),
             CategoryModel(
+                id = 12,
                 title = "Такси",
                 icon = 2130968617,
                 color = "18446678103011885056",
                 builtIn = true
             ),
             CategoryModel(
+                id = 13,
                 title = "Уход",
                 icon = 2130968647,
                 color = "18393721529914359808",

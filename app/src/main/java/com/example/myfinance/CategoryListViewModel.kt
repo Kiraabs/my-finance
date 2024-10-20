@@ -9,6 +9,14 @@ import androidx.lifecycle.ViewModel
  */
 class CategoryListViewModel : ViewModel()
 {
+    companion object
+    {
+        /**
+         * Выбранная пользователем категория.
+         */
+        var SelectedCategory: CategoryModel? = null
+    }
+
     /**
      * Список категорий.
      */
